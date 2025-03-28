@@ -8,9 +8,30 @@ const Navbar = () => {
                     <Link className="navbar-brand h4 fw-bold text-dark m-0 align-self-start" to="/">
                         Movie App
                     </Link>
-                    <Link to="/" className="text-dark text-decoration-none   nav-link">
-                        <span className="">Movies</span>
-                    </Link>
+                    <div className="dropdown">
+                        <Link
+                            to="#"
+                            className="text-dark text-decoration-none nav-link dropdown-toggle"
+                            id="moviesDropdown"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+                            Movies
+                        </Link>
+                        <ul className="dropdown-menu" aria-labelledby="moviesDropdown">
+                            <li>
+                                <Link className="dropdown-item" to="/nowplaying">
+                                    Now Playing
+                                </Link>
+                            </li>
+                            <li>
+                                <Link className="dropdown-item" to="/popular">
+                                    Popular
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                     <Link to="/tvShows" className="text-dark text-decoration-none nav-link">
                         <span className="">TV Shows</span>
                     </Link>
