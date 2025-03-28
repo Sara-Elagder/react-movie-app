@@ -1,6 +1,5 @@
 import { movieList } from '../apis/api'
 import { useEffect, useState } from 'react';
-import { useWishlist } from '../context/wishList';
 function MovieList(){
     const [movie, setmovies] = useState()
     //const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();

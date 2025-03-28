@@ -25,5 +25,5 @@ export function WishlistProvider({children}) {
     )
 }
 export default wishlist
-export const useWishlist = useContext(wishlist) //-> returns the three functions in order, هنخزنهم بعدين ع شان نستخدمهم في الكومبوننت اللي هنعملها
+// export const useWishlist = useContext(wishlist) //-> returns the three functions in order, هنخزنهم بعدين ع شان نستخدمهم في الكومبوننت اللي هنعملها
 
