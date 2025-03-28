@@ -1,11 +1,14 @@
-import './App.css'
-import MovieList from './pages/MovieList'
-function App() {
-return (
+ import { BrowserRouter } from "react-router-dom"
+ import RoutesList from "./routes/RoutesList";
+ function App(){
+ return (
     <>
-    <h1 className='font-bold'>hello</h1>
-    <MovieList></MovieList>
-    </>
+    <BrowserRouter>
+  <RoutesList>
+    
+  </RoutesList>
+    </BrowserRouter>
+     </>
   )
-}
+ }
 export default App
