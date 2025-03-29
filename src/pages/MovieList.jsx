@@ -21,7 +21,7 @@ function MovieList() {
       <SearchBar />
       <div className='row mt-5'>
         {movies?.map((movie) => (
-          <div key={movie.id} className='col-3 mb-4'>
+          <div key={movie.id} className='col-2 mb-4'>
             <MovieCard movieObj={movie} />
           </div>
         ))}
