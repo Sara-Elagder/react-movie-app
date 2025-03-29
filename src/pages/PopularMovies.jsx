@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { movieListPopular } from "../apis/api";
+import MovieCard from "../components/MovieCard";
 import Pagination from "../components/pagination";
+import SearchBar from "../components/SearchBar"; // Import SearchBar
 import { useLanguage } from "../context/LanguageContext"; // Import LanguageContext
 
 function MoviePopularList() {
@@ -25,7 +27,15 @@ function MoviePopularList() {
 
     return (
         <>
-            <div>
+            <SearchBar /> {/* Add SearchBar at the top */}
+            <div className="row mt-5">
+                {movies?.map((movie) => (
+                    <div key={movie.id} className="col-2 mb-4">
+                        <MovieCard movieObj={movie} />
+                    </div>
+                ))}
+            </div>
+            <div className="d-flex justify-content-center mt-4">
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
         </>
