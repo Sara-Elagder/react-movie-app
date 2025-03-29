@@ -4,6 +4,8 @@ import axios from "axios";
 import { FaLink, FaHeart } from "react-icons/fa";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import Recommendations from "../components/recommendations";
+import ReviewCard from "../components/ReviewCard";
+import { MovieReviews } from "../apis/api";
 import { useWishlist } from "../context/wishList";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -32,6 +34,30 @@ const MovieDetails = () => {
         fetchMovie();
     }, [id]);
 
+    //collecting reviews per movie
+    const [reviews, setReviews] = useState([]);
+    const [reviewError, setReviewError] = useState(null);
+    
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                // setReviewError(null)
+                const reviewDetails = await MovieReviews(id)
+                setReviews(reviewDetails)
+                //console.log(reviews)
+            }catch(error){
+                setReviewError(error.message)
+                console.error('failed to fetch reviews: ', error )
+            }
+            }
+            fetchReviews()
+
+        }, [id]
+    )
+    //end reviews
+    useEffect(() => {
+        console.log(reviews);
+    }, [reviews]);
     // toggle wishlist status
     const handleWishlistToggle = (e) => {
         e.preventDefault();
@@ -140,6 +166,12 @@ const MovieDetails = () => {
             <div>
                 <Recommendations movieId={id} />
             </div>
+            <div className="movie-divider"></div>
+            <hr/>
+            <div className ="movie-reviews">
+                <h1 className="movie-reviews-header">Reviews</h1>
+                <ReviewCard reviews={reviews}/>
+                </div>
         </>
     );
 };

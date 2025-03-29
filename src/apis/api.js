@@ -46,10 +46,9 @@ export const movieListPopular = async (page) =>{
 
 export const MovieReviews = async (movieId) =>{
   try{
-    const response = await axios.get(`${config.BASE_URL}movie/${movieId}/reviews`,
+    const response = await axios.get(`${config.BASE_URL}movie/${movieId}/reviews?api_key=${config.API_KEY}`,
       {
         params:{
-          api_key: config.API_KEY,
           page:1
         }
       }
