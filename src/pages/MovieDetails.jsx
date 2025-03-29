@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaLink, FaHeart } from "react-icons/fa";
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import Recommendations from "../components/recommendations";
 
 const MovieDetails = () => {
     const { id } = useParams();
@@ -137,6 +138,9 @@ const MovieDetails = () => {
             </div>
 
             <div className="movie-divider"></div>
+            <div> 
+                <Recommendations movieId={id} />
+            </div>            
         </>
     );
 };
