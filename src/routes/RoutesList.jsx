@@ -9,6 +9,7 @@ import TVShowsList from "../pages/TVShowsList";
 import MovieDetails from "../pages/MovieDetails";
 import MoviePopularList from "../pages/PopularMovies";
 import SearchResults from "../pages/Searchesults";
+import TVShowDetails from "../pages/TVShowDetails";
 
 const RoutesList = () => {
     return (
@@ -20,6 +21,7 @@ const RoutesList = () => {
                     <Route path="/tvShows" element={<TVShowsList />} />
                     <Route path="/watchlist" element={<Watchlist />} />
                     <Route path="/movie/:id" element={<MovieDetails />} />
+                    <Route path="/tv/:id" element={<TVShowDetails />} />
                     <Route path="/search" element={<SearchResults />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />

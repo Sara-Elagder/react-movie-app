@@ -1,54 +1,46 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
 import { FaLink, FaHeart } from "react-icons/fa";
 import Recommendations from "../components/recommendations";
 import Loader from "../components/Loader";
 import { Container, Row, Col, Badge, Button } from "react-bootstrap";
 import emptyPosterImage from "../assets/empty_poster.png";
 import ReviewCard from "../components/ReviewCard";
-import { MovieReviews } from "../apis/api";
+import { fetchMovieDetails, MovieReviews } from "../apis/api";
+import { useLanguage } from "../context/LanguageContext";
+import { useWishlist } from "../context/wishList"; // Import wishlist context
 
 const MovieDetails = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [isFavorite, setIsFavorite] = useState(false);
     const [reviews, setReviews] = useState([]);
     const [reviewError, setReviewError] = useState(null);
-
-    useEffect(() => {
-        const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-        setIsFavorite(wishlist.includes(id));
-    }, [id]);
+    const { language } = useLanguage(); // Get language from context
+    const { addToWishlist, removeFromWishlist, inWishlist } = useWishlist(); // Use wishlist context
 
     useEffect(() => {
         const fetchMovie = async () => {
             setLoading(true); // Start loading
             try {
-                const BASE_URL = import.meta.env.VITE_BASE_URL?.endsWith("/")
-                    ? import.meta.env.VITE_BASE_URL
-                    : `${import.meta.env.VITE_BASE_URL}/`;
-                
-                const url = `${BASE_URL}movie/${id}`;
-                const { data } = await axios.get(url, { params: { api_key: import.meta.env.VITE_API_KEY } });
-
-                setMovie(data);
+                const movieData = await fetchMovieDetails(id, language);
+                setMovie(movieData);
             } catch (err) {
                 setError("Failed to fetch movie details. Please try again.");
+                console.error("Failed to fetch movie details:", err);
             } finally {
                 setLoading(false); // Stop loading
             }
         };
 
         fetchMovie();
-    }, [id]);
+    }, [id, language]);
 
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const reviewDetails = await MovieReviews(id);
+                const reviewDetails = await MovieReviews(id, language);
                 setReviews(reviewDetails);
             } catch (error) {
                 setReviewError("Failed to fetch reviews.");
@@ -56,43 +48,50 @@ const MovieDetails = () => {
             }
         };
         fetchReviews();
-    }, [id]);
+    }, [id, language]);
 
-    const toggleFavorite = () => {
-        const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-        const updatedWishlist = isFavorite
-            ? wishlist.filter(movieId => movieId !== id)
-            : [...wishlist, id];
+    // Handle wishlist toggle
+    const handleWishlistToggle = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
 
-        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-        setIsFavorite(!isFavorite);
+        if (inWishlist(movie)) {
+            removeFromWishlist(movie);
+        } else {
+            addToWishlist(movie);
+        }
     };
 
     if (loading) return <Loader />;
     if (error) return <p className="text-danger text-center">{error}</p>;
 
+    // Check if the movie is in the wishlist
+    const isInWishlist = inWishlist(movie);
+
     return (
         <Container className="mt-4">
             <Row className="align-items-start">
                 <Col md={4} className="text-start">
-                    <img 
-                        className="rounded-3 img-fluid" 
-                        src={movie.poster_path ? `${import.meta.env.VITE_IMAGE_URL}${movie.poster_path}` : emptyPosterImage} 
-                        alt={movie.title} 
+                    <img
+                        className="rounded-3 img-fluid"
+                        src={movie.poster_path ? `${import.meta.env.VITE_IMAGE_URL}${movie.poster_path}` : emptyPosterImage}
+                        alt={movie.title}
                         style={{ width: "100%", objectFit: "cover", borderRadius: "27px" }}
                     />
                 </Col>
                 <Col md={8}>
                     <div className="d-flex justify-content-between align-items-center">
                         <h1 className="h3 fw-bold" style={{ fontSize: "48px", color: "#000" }}>{movie.title}</h1>
-                        <FaHeart 
-                            onClick={toggleFavorite} 
-                            className="fs-4" 
-                            role="button" 
-                            style={{ 
-                                cursor: "pointer", 
-                                transition: "all 0.3s ease-in-out", 
-                                color: isFavorite ? "#FFE353" : "#6c757d" 
+                        <FaHeart
+                            onClick={handleWishlistToggle}
+                            className="fs-4"
+                            role="button"
+                            style={{
+                                cursor: "pointer",
+                                transition: "all 0.3s ease-in-out",
+                                color: isInWishlist ? "#FFE353" : "#6c757d"
                             }}
                         />
                     </div>
@@ -118,18 +117,21 @@ const MovieDetails = () => {
                         </div>
                     )}
                     {movie.homepage && movie.homepage.trim() && (
-                        <Button 
-                            className="border fw-bold mt-4 d-flex align-items-center justify-content-center" 
-                            style={{ 
-                                backgroundColor: "transparent", 
-                                borderColor: "#FFE353", 
+                        <Button
+                            className="border fw-bold mt-4 d-flex align-items-center justify-content-center"
+                            style={{
+                                backgroundColor: "transparent",
+                                borderColor: "#FFE353",
                                 borderRadius: "25px",
                                 padding: "10px 15px",
                                 color: "#000",
                                 width: "122px",
                                 height: "37px",
-                                gap: "8px" 
+                                gap: "8px"
                             }}
+                            href={movie.homepage}
+                            target="_blank"
+                            rel="noopener noreferrer"
                         >
                             Website
                             <FaLink style={{ color: "#292D32", fontSize: "18px" }} />
@@ -148,8 +150,10 @@ const MovieDetails = () => {
                 <h1 className="movie-reviews-header">Reviews</h1>
                 {reviewError ? (
                     <p className="text-danger">{reviewError}</p>
-                ) : (
+                ) : reviews.length > 0 ? (
                     <ReviewCard reviews={reviews} />
+                ) : (
+                    <p>No reviews available for this movie.</p>
                 )}
             </div>
         </Container>
