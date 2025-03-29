@@ -42,8 +42,27 @@ function Recommendations({ movieId }) {
                     ))}
                 </Swiper>
             ) : (
-                <p>Loading...</p>
+                <p>
+                    We don't have enough data to suggest any movies based on this movie.
+                    You can help by rating movies you've seen.
+
+                </p>
             )}
+            <style>
+                {`
+                .swiper-button-next, .swiper-button-prev {
+                    color: #FFEA50 !important;
+                    top: 40% !important;
+                    transform: translateY(-50%) !important;
+                }
+                .swiper-button-next {
+                    right: 10px !important;
+                }
+                .swiper-button-prev {
+                    left: 10px !important;
+                }
+                `}
+            </style>
         </div>
     );
 }

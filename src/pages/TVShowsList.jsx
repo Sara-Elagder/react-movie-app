@@ -30,7 +30,7 @@ function TVShowsList() {
     }
     return (
         <>
-            <SearchBar />
+            <h1>TV Shows</h1>
             <div
                 className="grid grid-cols-1 sm:w-full sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-5">
                 {shows?.map((show) => (
