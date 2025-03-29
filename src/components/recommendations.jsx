@@ -1,23 +1,27 @@
-import { getRecommendations } from '../apis/api';
-import { useEffect, useState } from 'react';
-import MovieCard from './MovieCard';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import { Navigation } from 'swiper/modules';
+import { getRecommendations } from "../apis/api";
+import { useEffect, useState } from "react";
+import { useLanguage } from "../context/LanguageContext"; // Import LanguageContext
+import MovieCard from "./MovieCard";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
 
 function Recommendations({ movieId }) {
     const [recommendations, setRecommendations] = useState([]);
-  console.log(
-    `3#########33333 ${movieId}`
-  )
+    const { language } = useLanguage(); // Get the selected language from context
+
     useEffect(() => {
         const fetchMovies = async () => {
-            const movies = await getRecommendations(+movieId);
-            setRecommendations(movies);
+            try {
+                const movies = await getRecommendations(+movieId, language); // Pass language to API
+                setRecommendations(movies);
+            } catch (error) {
+                console.error("Error fetching recommendations:", error);
+            }
         };
         fetchMovies();
-    }, [movieId]);
+    }, [movieId, language]); // Re-fetch when movieId or language changes
 
     return (
         <div>
@@ -26,8 +30,10 @@ function Recommendations({ movieId }) {
                 <Swiper
                     modules={[Navigation]}
                     spaceBetween={10}
-                    slidesPerView={6} 
+                    slidesPerView={6}
                     navigation
+                    onTouchStart={(e) => e.stopPropagation()} // Prevent Swiper from interfering with dropdown
+                    onClick={(e) => e.stopPropagation()} // Prevent Swiper click events from propagating
                 >
                     {recommendations.map((movie) => (
                         <SwiperSlide key={movie.id}>

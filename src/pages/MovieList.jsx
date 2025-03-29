@@ -1,34 +1,35 @@
-import { getMoviesList } from '../apis/api'
-import { useEffect, useState } from 'react';
-import MovieCard from '../components/MovieCard';
-import SearchBar from '../components/SearchBar';
+import { getMoviesList } from "../apis/api";
+import { useEffect, useState } from "react";
+import MovieCard from "../components/MovieCard";
+import SearchBar from "../components/SearchBar";
+import { useLanguage } from "../context/LanguageContext";
+
 function MovieList() {
-  const [movies, setMovies] = useState()
-  //const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+    const { language } = useLanguage();
 
-  useEffect(() => {
-    const fetchMovies = async () => {
-      const moviesList = await getMoviesList();
-      setMovies(moviesList);
+    const [movies, setMovies] = useState();
+    //const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
-    };
-    fetchMovies();
-  }, []);
+    useEffect(() => {
+        const fetchMovies = async () => {
+            const moviesList = await getMoviesList(language);
+            setMovies(moviesList);
+        };
 
+        fetchMovies();
+    }, [language]);
 
-  return (
-    <>
-      <SearchBar />
-      <div className='row mt-5'>
-        {movies?.map((movie) => (
-          <div key={movie.id} className='col-2 mb-4'>
-            <MovieCard movieObj={movie} />
-          </div>
-        ))}
-      </div>
-    </>
-  )
-
-
+    return (
+        <>
+            <SearchBar />
+            <div className="row mt-5">
+                {movies?.map((movie) => (
+                    <div key={movie.id} className="col-2 mb-4">
+                        <MovieCard movieObj={movie} />
+                    </div>
+                ))}
+            </div>
+        </>
+    );
 }
-export default MovieList
+export default MovieList;
