@@ -17,7 +17,7 @@ const WatchList = () => {
         // Simulate a loading delay (e.g., for fetching data)
         const timer = setTimeout(() => {
             setLoading(false); // Stop loading after a delay
-        }, 1000);
+        }, 300);
 
         return () => clearTimeout(timer); // Cleanup the timer
     }, [wishList]);
