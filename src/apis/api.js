@@ -121,7 +121,7 @@ export const fetchMovieDetails = async (id, language) => {
 
 //creating search api service
 
-export const searchMovies = async (query, language, page = 1) => {
+export const searchMovies = async (query, language, page=1) => {
   try {
     const response = await axios.get(`${config.BASE_URL}search/movie`, {
       params: {
@@ -131,7 +131,10 @@ export const searchMovies = async (query, language, page = 1) => {
         page: page,
       }
     });
-    return response.data.results;
+    console.log(response.data.results);
+    console.log(response.data.total_pages);
+    console.log(page);
+    return {results: response.data.results, totalPages: response.data.total_pages};
    } catch (error) {
     console.error("Error searching movies:", error);
     throw error;

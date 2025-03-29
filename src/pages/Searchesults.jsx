@@ -11,6 +11,12 @@ const SearchResults = () => {
     const query = queryParams.get("query");
     const page = queryParams.get("page") || 1;
 
+    const onPageChange = (newPage) => {
+        setCurrentPage(newPage)
+        navigate(`/search?query=${encodeURIComponent(query)}&page=${newPage}`);
+      };
+    
+
     const [currentPage, setCurrentPage] = useState(page);
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -25,9 +31,9 @@ const SearchResults = () => {
 
             try {
                 setLoading(true);
-                const results = await searchMovies(query, "en-US", page);
+                const {results, total_pages} = await searchMovies(query, "en-US", page);
                 setMovies(results);
-                setTotalPages(results.total_pages);
+                setTotalPages(total_pages);
                 setLoading(false); // Ensure loading is set to false after fetching
             } catch (err) {
                 setError(err);
@@ -35,12 +41,9 @@ const SearchResults = () => {
             }
         };
         fetchMovies();
-    }, [query, page]); // Properly close the useEffect block
+    }, [currentPage, query, page]); // Properly close the useEffect block
 
-    const handlePageChange = (newPage) => {
-        setCurrentPage(newPage);
-        navigate(`/search?query=${query}&page=${newPage}`);
-    };
+
 
     if (loading) {
         return <div>Loading...</div>;
@@ -61,7 +64,7 @@ const SearchResults = () => {
                 ))}
             </div>
             <div className="d-flex justify-content-center mt-4">
-                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
             </div>        </div>
     );
 };
