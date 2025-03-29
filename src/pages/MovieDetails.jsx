@@ -140,8 +140,6 @@ const MovieDetails = () => {
             <div className="movie-divider"></div>
             <div> 
                 <Recommendations movieId={id} />
-                <a className="btn-bg-danger">mustafa </a>
-                
             </div>            
         </>
     );
