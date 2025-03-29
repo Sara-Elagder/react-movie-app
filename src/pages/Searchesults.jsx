@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { searchMovies } from "../apis/api";
 import MovieCard from "../components/MovieCard";
 import Pagination from "../components/pagination";
+import SearchBar from "../components/SearchBar";
 import Loader from "../components/Loader";
 const SearchResults = () => {
     const location = useLocation();
@@ -53,7 +54,9 @@ const SearchResults = () => {
 
     return (
         <div>
-            <h1>Search Results for "{query}"</h1>
+            <SearchBar/>
+            <br/>
+            <h2>Search Results for "{query}"</h2>
             <div className="row mt-5">
                 {movies.map((movie) => (
                     <div key={movie.id} className="col-2 mb-4">

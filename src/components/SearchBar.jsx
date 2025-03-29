@@ -14,18 +14,12 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div className="text-left py-5 mt-4" style={{ background: "#F3F1F1" }}>
-      <div className="container-fluid mt-4 px-0">
-        <div className="px-5">
-          <h1 className="fw-bold text-dark mt-3">Welcome to our movie app</h1>
-          <p className="text-black mt-4">
-            Millions of movies, TV shows and people to discover. Explore now.
-          </p>
+
           <div className="mt-4">
             <div className="d-flex align-items-center">
               <input
                 type="text"
-                className="form-control border-0 px-3 me-3"
+                className="form-control border-1 px-3 me-3"
                 placeholder="Search and explore...."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -56,9 +50,7 @@ const SearchBar = ({ onSearch }) => {
               </button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+       
   );
 };
 
