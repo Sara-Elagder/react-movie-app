@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import MovieCard from "../components/MovieCard";
 import SearchBar from "../components/SearchBar";
 import { useLanguage } from "../context/LanguageContext";
+import Loader from "../components/Loader";
 
 function MovieList() {
+    const [loading, setLoading] = useState(true);
     const { language } = useLanguage();
 
     const [movies, setMovies] = useState();
@@ -12,13 +14,23 @@ function MovieList() {
 
     useEffect(() => {
         const fetchMovies = async () => {
-            const moviesList = await getMoviesList(language);
-            setMovies(moviesList);
+            try {
+                setLoading(true); // Start loading
+                const moviesList = await getMoviesList(language);
+                setMovies(moviesList);
+            } catch (error) {
+                console.error("Failed to fetch movies:", error);
+            } finally {
+                setLoading(false); // Stop loading
+            }
         };
 
         fetchMovies();
     }, [language]);
-
+    // Show Loader while loading
+    if (loading) {
+        return <Loader />;
+    }
     return (
         <>
             <SearchBar />

@@ -9,8 +9,10 @@ import { useWishlist } from "../context/wishList";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FaLink } from "react-icons/fa";
+import Loader from "../components/Loader";
 
 const MovieDetails = () => {
+    const [loading, setLoading] = useState(true);
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
     const [error, setError] = useState(null);
@@ -21,11 +23,14 @@ const MovieDetails = () => {
     useEffect(() => {
         const fetchMovie = async () => {
             try {
+                setLoading(true); // Start loading
                 const data = await fetchMovieDetails(id, language); // Use the correct API function
                 setMovie(data);
             } catch (err) {
                 console.error("Failed to fetch movie details:", err);
                 setError("Failed to fetch movie details. Please try again.");
+            } finally {
+                setLoading(false); // Stop loading
             }
         };
 
@@ -35,23 +40,21 @@ const MovieDetails = () => {
     //collecting reviews per movie
     const [reviews, setReviews] = useState([]);
     const [reviewError, setReviewError] = useState(null);
-    
+
     useEffect(() => {
         const fetchReviews = async () => {
             try {
                 // setReviewError(null)
-                const reviewDetails = await MovieReviews(id)
-                setReviews(reviewDetails)
+                const reviewDetails = await MovieReviews(id);
+                setReviews(reviewDetails);
                 //console.log(reviews)
-            }catch(error){
-                setReviewError(error.message)
-                console.error('failed to fetch reviews: ', error )
+            } catch (error) {
+                setReviewError(error.message);
+                console.error("failed to fetch reviews: ", error);
             }
-            }
-            fetchReviews()
-
-        }, [id]
-    )
+        };
+        fetchReviews();
+    }, [id]);
     //end reviews
     useEffect(() => {
         console.log(reviews);
@@ -65,7 +68,10 @@ const MovieDetails = () => {
             addToWishlist(movie);
         }
     };
-
+    // Show Loader while loading
+    if (loading) {
+        return <Loader />;
+    }
     if (error) return <p className="error-message">{error}</p>;
     if (!movie) return <p className="loading-message">Loading...</p>;
 
@@ -158,11 +164,11 @@ const MovieDetails = () => {
                 <Recommendations movieId={id} />
             </div>
             <div className="movie-divider"></div>
-            <hr/>
-            <div className ="movie-reviews">
+            <hr />
+            <div className="movie-reviews">
                 <h1 className="movie-reviews-header">Reviews</h1>
-                <ReviewCard reviews={reviews}/>
-                </div>
+                <ReviewCard reviews={reviews} />
+            </div>
         </>
     );
 };

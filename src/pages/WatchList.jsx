@@ -1,16 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BrokenHeart from "../assets/broken-heart.svg";
 import { useWishlist } from "../context/wishList";
 import WishListCard from "../components/WishListCard";
+import Loader from "../components/Loader"; // Import the Loader component
 
 const WatchList = () => {
     const { wishList } = useWishlist();
+    const [loading, setLoading] = useState(true); // State to track loading
 
     // Separate movies and TV shows
     const movies = wishList.filter((item) => item.title); // Movies have a `title` property
     const tvShows = wishList.filter((item) => item.name); // TV shows have a `name` property
 
+    useEffect(() => {
+        // Simulate a loading delay (e.g., for fetching data)
+        const timer = setTimeout(() => {
+            setLoading(false); // Stop loading after a delay
+        }, 1000);
+
+        return () => clearTimeout(timer); // Cleanup the timer
+    }, [wishList]);
+
+    if (loading) {
+        return <Loader />; // Show Loader while loading
+    }
     return (
         <>
             <h1 className="fs-4 fw-bold">Watchlist</h1>
@@ -33,7 +47,7 @@ const WatchList = () => {
                                 <h2 className="fs-5 fw-bold mt-4">Movies</h2>
                                 <div className="row">
                                     {movies.map((movie) => (
-                                        <div className="col-6 p-3" key={movie.id}>
+                                        <div className="col-12 col-md-6 p-3" key={movie.id}>
                                             <WishListCard movie={movie} />
                                         </div>
                                     ))}
@@ -47,7 +61,7 @@ const WatchList = () => {
                                 <h2 className="fs-5 fw-bold mt-4">TV Shows</h2>
                                 <div className="row">
                                     {tvShows.map((tvShow) => (
-                                        <div className="col-6 p-3" key={tvShow.id}>
+                                        <div className="col-12 col-md-6 p-3" key={tvShow.id}>
                                             <WishListCard movie={tvShow} />
                                         </div>
                                     ))}
