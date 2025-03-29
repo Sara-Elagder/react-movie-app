@@ -35,6 +35,11 @@ These instructions will get you a copy of the project up and running on your loc
    ```sh
    npm install
    ```
+3. Copy the `.env.example` file to create a new `.env` file:
+
+   ```sh
+   # For Linux/MacOS
+   cp .env.example .env
 
 ### Usage
 
