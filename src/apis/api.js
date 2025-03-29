@@ -11,6 +11,43 @@ export const movieList = async () => {
   }
 }
 
+export const movieListPopular = async (page) =>{
+  try {
+    //console.log(`${config.BASE_URL}movie/popular?api_key=${config.API_KEY}`)
+    console.log(page)
+    const response = await axios.get(`${config.BASE_URL}movie/popular`,{
+    params:{
+      api_key: config.API_KEY,
+      page: page
+    }
+  })
+  return {
+    moviesPopular: response.data.results,
+    totalPages: response.data.total_pages
+  };
+  }
+  catch (error) {
+    console.error('Error fetching popular movie list:', error)
+  }
+}
+
+export const MovieReviews = async (movieId) =>{
+  try{
+    const response = await axios.get(`${config.BASE_URL}movie/${movieId}/reviews`,
+      {
+        params:{
+          api_key: config.API_KEY,
+          page:1
+        }
+      }
+    )
+    return response.data.results
+  }catch(error){
+    console.log("Error fetching reviews: ", error)
+    throw error
+  }
+}
+
 // Fetch reviews for a specific movie
 export const fetchMovieReviews = async (movieId) => {
   try {
