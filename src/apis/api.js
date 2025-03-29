@@ -12,6 +12,18 @@ export const getMoviesList = async () => {
   }
 }
 
+
+export const getTvShowsList = async () => {
+  try {
+    const response = await axios.get(`${config.BASE_URL}tv/popular?api_key=${config.API_KEY}`)
+    return response.data.results
+  } catch (error) {
+    console.error('Error fetching tv-shows list:', error)
+    throw error
+  }
+}
+
+
 export const movieListPopular = async (page) =>{
   try {
     //console.log(`${config.BASE_URL}movie/popular?api_key=${config.API_KEY}`)
