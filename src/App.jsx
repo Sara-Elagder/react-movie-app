@@ -6,14 +6,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import "./App.css";
 import { WishlistProvider } from "./context/wishList";
+import { LanguageProvider } from "./context/LanguageContext";
 
 function App() {
     return (
-        <WishlistProvider>
-            <BrowserRouter>
-                <RoutesList />
-            </BrowserRouter>
-        </WishlistProvider>
+        <LanguageProvider>
+            <WishlistProvider>
+                <BrowserRouter>
+                    <RoutesList />
+                </BrowserRouter>
+            </WishlistProvider>
+        </LanguageProvider>
     );
 }
 export default App;

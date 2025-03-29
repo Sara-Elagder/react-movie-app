@@ -1,38 +1,35 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-import { FaLink, FaHeart } from "react-icons/fa";
-import "@fortawesome/fontawesome-free/css/all.min.css";
+import { fetchMovieDetails } from "../apis/api"; // Import the correct API function
+import { useLanguage } from "../context/LanguageContext";
 import Recommendations from "../components/recommendations";
 import { useWishlist } from "../context/wishList";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { FaLink } from "react-icons/fa";
 
 const MovieDetails = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
     const [error, setError] = useState(null);
-
-    const { addToWishlist, removeFromWishlist, inWishlist } = useWishlist(); // Fetch movie details from the API
+    const { language } = useLanguage(); // Get the selected language from context
+    const { addToWishlist, removeFromWishlist, inWishlist } = useWishlist();
     const isInWishlist = movie ? inWishlist(movie) : false;
 
     useEffect(() => {
         const fetchMovie = async () => {
             try {
-                const BASE_URL = import.meta.env.VITE_BASE_URL?.endsWith("/") ? import.meta.env.VITE_BASE_URL : `${import.meta.env.VITE_BASE_URL}/`;
-
-                const url = `${BASE_URL}movie/${id}`;
-                const { data } = await axios.get(url, { params: { api_key: import.meta.env.VITE_API_KEY } });
+                const data = await fetchMovieDetails(id, language); // Use the correct API function
                 setMovie(data);
             } catch (err) {
+                console.error("Failed to fetch movie details:", err);
                 setError("Failed to fetch movie details. Please try again.");
             }
         };
 
         fetchMovie();
-    }, [id]);
+    }, [id, language]); // Re-fetch when `id` or `language` changes
 
-    // toggle wishlist status
     const handleWishlistToggle = (e) => {
         e.preventDefault();
         if (isInWishlist) {
@@ -41,12 +38,13 @@ const MovieDetails = () => {
             addToWishlist(movie);
         }
     };
+
     if (error) return <p className="error-message">{error}</p>;
     if (!movie) return <p className="loading-message">Loading...</p>;
 
     return (
         <>
-            <div className="movie-container ">
+            <div className="movie-container">
                 <div className="movie-poster">
                     {movie.poster_path ? (
                         <img src={`${import.meta.env.VITE_IMAGE_URL}${movie.poster_path}`} alt={movie.title} />
@@ -56,7 +54,6 @@ const MovieDetails = () => {
                 </div>
 
                 <div>
-                    {/* Movie title with favorite icon */}
                     <div className="movie-header">
                         <h2 className="movie-title">{movie.title}</h2>
                         <a href="#" onClick={handleWishlistToggle} className="mb-0 mr-3">
@@ -64,10 +61,8 @@ const MovieDetails = () => {
                         </a>
                     </div>
 
-                    {/* Release date */}
                     <p className="movie-date mt-3">{movie.release_date || "N/A"}</p>
 
-                    {/* Movie rating (stars + numeric value) */}
                     <div className="movie-rating mt-4">
                         {[...Array(5)].map((_, index) => (
                             <span key={index} className="star-wrapper">
@@ -87,10 +82,8 @@ const MovieDetails = () => {
                         <span className="rating-number">{movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}</span>
                     </div>
 
-                    {/* Movie description */}
                     <p className="movie-description mt-5">{movie.overview || "No overview available."}</p>
 
-                    {/* Movie genres */}
                     <div className="movie-genres mt-4">
                         {movie.genres?.map((genre) => (
                             <span key={genre.id} className="genre-badge">
@@ -99,7 +92,6 @@ const MovieDetails = () => {
                         ))}
                     </div>
 
-                    {/* Additional movie details */}
                     <div className="movie-info mt-4">
                         <p>
                             <strong>Duration:</strong>{" "}
@@ -113,7 +105,6 @@ const MovieDetails = () => {
                         </p>
                     </div>
 
-                    {/* Production company (if available) */}
                     {movie.production_companies?.length > 0 && (
                         <div className="movie-company mt-4">
                             {movie.production_companies[0].logo_path ? (
@@ -127,7 +118,6 @@ const MovieDetails = () => {
                         </div>
                     )}
 
-                    {/* Official movie website link */}
                     {movie.homepage && (
                         <a href={movie.homepage} target="_blank" className="movie-website mt-4">
                             Website <FaLink className="link-icon" />
