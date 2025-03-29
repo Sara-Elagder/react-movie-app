@@ -7,7 +7,7 @@ export const getMoviesList = async (language) => {
     const response = await axios.get(`${config.BASE_URL}movie/now_playing`, {
       params: {
         api_key: config.API_KEY,
-        language, // Include the language parameter
+        language,
       },
     });
     return response.data.results;
@@ -23,7 +23,7 @@ export const getTvShowsList = async (language) => {
     const response = await axios.get(`${config.BASE_URL}tv/popular`, {
       params: {
         api_key: config.API_KEY,
-        language, // Include the language parameter
+        language, 
       },
     });
     return response.data.results;
@@ -40,7 +40,7 @@ export const movieListPopular = async (page, language) => {
       params: {
         api_key: config.API_KEY,
         page,
-        language, // Include the language parameter
+        language, 
       },
     });
     return {
@@ -51,7 +51,7 @@ export const movieListPopular = async (page, language) => {
     console.error('Error fetching popular movie list:', error);
     throw error;
   }
-};
+}
 
 // Fetch reviews for a specific movie
 export const MovieReviews = async (movieId, language) => {
@@ -60,28 +60,12 @@ export const MovieReviews = async (movieId, language) => {
       params: {
         api_key: config.API_KEY,
         page: 1,
-        language, // Include the language parameter
-      },
-    });
-    return response.data.results;
-  } catch (error) {
-    console.error("Error fetching reviews: ", error);
-    throw error;
-  }
-};
-
-// Fetch reviews for a specific movie (alternative function)
-export const fetchMovieReviews = async (movieId, language) => {
-  try {
-    const response = await axios.get(`${config.BASE_URL}movie/${movieId}/reviews`, {
-      params: {
-        api_key: config.API_KEY,
-        language, // Include the language parameter
+        language, 
       },
     });
     return response.data.results; // Returns an array of reviews
   } catch (error) {
-    console.error('Error fetching movie reviews:', error);
+    console.error("Error fetching reviews: ", error);
     throw error;
   }
 };
@@ -92,7 +76,7 @@ export const fetchTvShowDetails = async (seriesId, language) => {
     const response = await axios.get(`${config.BASE_URL}tv/${seriesId}`, {
       params: {
         api_key: config.API_KEY,
-        language, // Include the language parameter
+        language, 
       },
     });
     return response.data; // Returns TV show details
@@ -108,7 +92,7 @@ export const getRecommendations = async (movie_id, language) => {
     const response = await axios.get(`${config.BASE_URL}movie/${movie_id}/recommendations`, {
       params: {
         api_key: config.API_KEY,
-        language, // Include the language parameter
+        language, 
       },
     });
     return response.data.results;
