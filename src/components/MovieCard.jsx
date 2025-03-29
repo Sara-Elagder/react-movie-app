@@ -26,7 +26,12 @@ const MovieCard = ({ movieObj }) => {
 
     // Navigate to movie details
     const goToMovieDetails = () => {
-        navigate(`/movie/${id}`); // Redirect to the movie details page
+        if (title) {
+            navigate(`/movie/${id}`); // to the movie details page}
+        }
+        else {
+            navigate(`/tv/${id}`); // to the tv-show details page}
+        }
     };
 
     return (
