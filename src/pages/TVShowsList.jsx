@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import MovieCard from '../components/MovieCard';
 import SearchBar from '../components/SearchBar';
 function TVShowsList() {
-  const [shows, setShows] = useState()
+  const [shows, setShows] = useState([])
   //const { wishlist, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {

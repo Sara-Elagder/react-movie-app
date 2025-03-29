@@ -18,7 +18,7 @@ export const getTvShowsList = async () => {
     const response = await axios.get(`${config.BASE_URL}tv/popular?api_key=${config.API_KEY}`)
     return response.data.results
   } catch (error) {
-    console.error('Error fetching movie list:', error)
+    console.error('Error fetching tv-shows list:', error)
     throw error
   }
 }
