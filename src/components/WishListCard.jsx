@@ -40,15 +40,19 @@ const WishListCard = (props) => {
         }, 0);
     };
 
-    const goToMovieDetails = () => {
-        navigate(`/movie/${movie.id}`); // Redirects to the movie details page
+    const goToDetails = () => {
+        if (movie.title) {
+            navigate(`/movie/${movie.id}`); // Redirects to the movie details page
+        } else {
+            navigate(`/tv/${movie.id}`); // Redirects to the TV show details page
+        }
     };
 
     return (
-        <div className="card p-3 shadow" style={{ borderRadius: "19px", backgroundColor: "#F8F8F8", cursor: "pointer" }} onClick={goToMovieDetails}>
+        <div className="card p-3 shadow" style={{ borderRadius: "19px", backgroundColor: "#F8F8F8", cursor: "pointer" }} onClick={goToDetails}>
             <div className="row g-0">
                 <div className="col-md-4">
-                    <img src={movie_img} className="img-fluid" alt={movie.title} style={{ borderRadius: "27px", maxHeight: "250px" }} />
+                    <img src={movie_img} className="img-fluid" alt={movie.title || movie.name} style={{ borderRadius: "27px", maxHeight: "250px" }} />
                 </div>
                 <div className="col-md-8">
                     <div className="card-body">
@@ -63,7 +67,7 @@ const WishListCard = (props) => {
                                     textOverflow: "ellipsis",
                                 }}
                             >
-                                {movie.title}
+                                {movie.title || movie.name}
                             </h2>
                             <a
                                 href="#"
@@ -78,7 +82,7 @@ const WishListCard = (props) => {
                             </a>
                         </div>
                         <p className="card-text mb-1">
-                            <small style={{ color: "#858585" }}>{movie.release_date}</small>
+                            <small style={{ color: "#858585" }}>{movie.release_date || movie.first_air_date}</small>
                         </p>
                         <div className="d-flex mb-2">
                             <Rating
