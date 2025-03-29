@@ -5,6 +5,8 @@ import HeaderLayout from "../components/HeaderLayout";
 import NotFound from "../pages/NotFound";
 import MovieList from "../pages/MovieList";
 import Watchlist from "../pages/WatchList";
+import TVShowsList from "../pages/TVShowsList";
+import MovieDetails from "../pages/MovieDetails";
 
 const RoutesList = () => {
     return (
@@ -12,7 +14,9 @@ const RoutesList = () => {
             <Routes>
                 <Route element={<HeaderLayout />}>
                     <Route path="/" element={<MovieList />} />
+                    <Route path="/tv" element={<TVShowsList />} />
                     <Route path="/watchlist" element={<Watchlist />} />
+                    <Route path="/movie/:id" element={<MovieDetails />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
             </Routes>
