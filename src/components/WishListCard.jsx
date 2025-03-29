@@ -6,11 +6,17 @@ import { useWishlist } from "../context/wishList";
 import { useEffect } from "react";
 import { Tooltip } from "bootstrap";
 import { useNavigate } from "react-router-dom";
+import emptyPosterImage from "../assets/empty_poster.png"; // Import the image
 
 const WishListCard = (props) => {
     const { movie } = props;
     const img_url = import.meta.env.VITE_IMAGE_URL;
-    const movie_img = `${img_url}${movie.poster_path}`;
+    var movie_img = "";
+    if (movie.poster_path) {
+        movie_img = `${img_url}${movie.poster_path}`;
+    } else {
+        movie_img = emptyPosterImage;
+    }
     const { removeFromWishlist } = useWishlist();
     const navigate = useNavigate();
 
