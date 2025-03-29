@@ -12,7 +12,7 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <div className="text-left py-5 mt-4 mx-5" style={{ background: "#F3F1F1" }}>
+    <div className="text-left py-5 mt-4" style={{ background: "#F3F1F1" }}>
       <div className="container-fluid mt-4 px-0">
         <div className="px-5">
           <h1 className="fw-bold text-dark mt-3">Welcome to our movie app</h1>
@@ -33,22 +33,22 @@ const SearchBar = ({ onSearch }) => {
                   borderRadius: "10px",
                   boxShadow: "none",
                   fontSize: "1rem",
-                  flex: 1  
+                  flex: 1
                 }}
               />
-              <button 
-                className="btn  d-flex align-items-center justify-content-center " 
+              <button
+                className="btn  d-flex align-items-center justify-content-center "
                 onClick={handleSearch}
                 style={{
                   width: "120px",
                   height: "46px",
                   borderRadius: "10px",
                   padding: "0",
-                  flexShrink: 0,  
+                  flexShrink: 0,
                   background: "#FFE353"
                 }}
               >
-                
+
                 <span>Search</span>
               </button>
             </div>

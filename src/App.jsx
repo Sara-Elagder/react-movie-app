@@ -1,12 +1,19 @@
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom"
 import RoutesList from "./routes/RoutesList";
+
+import './App.css'
+import { WishlistProvider } from "./context/wishList";
+
+
 function App() {
-    return (
-        <>
-            <BrowserRouter>
-                <RoutesList />
-            </BrowserRouter>
-        </>
-    );
+  return (
+    <WishlistProvider>
+      <BrowserRouter>
+        <RoutesList>
+
+        </RoutesList>
+      </BrowserRouter>
+    </WishlistProvider>
+  )
 }
-export default App;
+export default App
