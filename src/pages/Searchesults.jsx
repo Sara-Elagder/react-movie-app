@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { searchMovies } from "../apis/api";
 import MovieCard from "../components/MovieCard";
 import Pagination from "../components/pagination";
-
+import Loader from "../components/Loader";
 const SearchResults = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -12,10 +12,9 @@ const SearchResults = () => {
     const page = queryParams.get("page") || 1;
 
     const onPageChange = (newPage) => {
-        setCurrentPage(newPage)
+        setCurrentPage(newPage);
         navigate(`/search?query=${encodeURIComponent(query)}&page=${newPage}`);
-      };
-    
+    };
 
     const [currentPage, setCurrentPage] = useState(page);
     const [movies, setMovies] = useState([]);
@@ -31,24 +30,23 @@ const SearchResults = () => {
 
             try {
                 setLoading(true);
-                const {results, total_pages} = await searchMovies(query, "en-US", page);
+                const { results, total_pages } = await searchMovies(query, "en-US", page);
                 setMovies(results);
                 setTotalPages(total_pages);
-                setLoading(false); // Ensure loading is set to false after fetching
             } catch (err) {
                 setError(err);
                 setLoading(false);
+            } finally {
+                setLoading(false); // Stop loading
             }
         };
         fetchMovies();
     }, [currentPage, query, page]); // Properly close the useEffect block
 
-
-
+    // Show Loader while loading
     if (loading) {
-        return <div>Loading...</div>;
+        return <Loader />;
     }
-
     if (error) {
         return <div>Error: {error.message}</div>;
     }
@@ -65,7 +63,8 @@ const SearchResults = () => {
             </div>
             <div className="d-flex justify-content-center mt-4">
                 <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />
-            </div>        </div>
+            </div>{" "}
+        </div>
     );
 };
 
