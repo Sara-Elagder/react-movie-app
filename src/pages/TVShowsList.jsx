@@ -24,9 +24,10 @@ function TVShowsList() {
     return (
         <>
             <SearchBar />
-            <div className="row mt-5">
+            <div
+                className="grid grid-cols-1 sm:w-full sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-5">
                 {shows?.map((show) => (
-                    <div key={show.id} className="col-2 mb-4">
+                    <div key={show.id} className="">
                         <MovieCard movieObj={show} />
                     </div>
                 ))}

@@ -37,7 +37,7 @@ const MovieCard = ({ movieObj }) => {
     return (
         <div
             id={`movie-card-${id}`}
-            className="max-w-sm bg-white rounded-xl overflow-hidden"
+            className="sm:w-full bg-white rounded-xl overflow-hidden"
             style={{ minHeight: "310px", cursor: "pointer" }}
             onClick={goToMovieDetails} // Add click handler for navigation
         >
