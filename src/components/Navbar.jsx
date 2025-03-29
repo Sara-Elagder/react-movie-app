@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { useWishlist } from "../context/wishList";
 
 const Navbar = () => {
+    const { wishList } = useWishlist();
     return (
         <nav className="navbar d-flex align-items-center justify-content-center" style={{ backgroundColor: "#FFE353", height: "55px" }}>
             <div className="container-fluid d-flex justify-content-between align-items-center px-4">
@@ -39,6 +41,8 @@ const Navbar = () => {
                 <Link to="/watchlist" className="text-dark text-decoration-none d-flex align-items-center gap-2">
                     <i className="fas fa-heart text-dark fs-4"></i>
                     <span className="fw-medium">Watchlist</span>
+
+                    {wishList.length > 0 && <span className="badge text-bg-light">{wishList.length}</span>}
                 </Link>
             </div>
         </nav>
