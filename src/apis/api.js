@@ -117,3 +117,22 @@ export const fetchMovieDetails = async (id, language) => {
     throw error;
   }
 };
+
+
+//creating search api service
+
+export const searchMovies = async (query, language, page = 1) => {
+  try {
+    const response = await axios.get(`${config.BASE_URL}search/movie`, {
+      params: {
+        api_key: config.API_KEY,
+        query: query,
+        language,
+        page: page,
+      }
+    });
+    return response.data.results;
+   } catch (error) {
+    console.error("Error searching movies:", error);
+    throw error;
+  }}
