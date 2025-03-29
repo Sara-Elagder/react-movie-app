@@ -6,7 +6,7 @@ import { useWishlist } from '../context/wishList';
 
 const MovieCard = ({ movieObj }) => {
   const { addToWishlist, removeFromWishlist, inWishlist } = useWishlist();
-  const { id, title, poster_path, vote_average, release_date } = movieObj;
+  const { id, title, name, first_air_date, poster_path, vote_average, release_date } = movieObj;
 
   const isInWishlist = inWishlist(movieObj);
 
@@ -46,9 +46,9 @@ const MovieCard = ({ movieObj }) => {
               height: '3em', // Fixed height for 2 lines
               lineHeight: '1.5em' // Helps with consistent line height
             }}>
-            {title}
+            {title || name}
           </p>
-          <p className='px-4 mb-0 text-gray-500'>{release_date}</p>
+          <p className='px-4 mb-0 text-gray-500'>{release_date || first_air_date}</p>
         </div>
         <div className='flex justify-end items-end my-1 w-1/6 h-16'>
           <a href="#" onClick={handleWishlistToggle} className="mb-0 mr-3">
