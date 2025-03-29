@@ -1,33 +1,41 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchMovieDetails } from "../apis/api"; // Import the correct API function
-import { useLanguage } from "../context/LanguageContext";
+import axios from "axios";
+import { FaLink, FaHeart } from "react-icons/fa";
 import Recommendations from "../components/recommendations";
+import Loader from "../components/Loader";
+import { Container, Row, Col, Badge, Button } from "react-bootstrap";
+import emptyPosterImage from "../assets/empty_poster.png";
 import ReviewCard from "../components/ReviewCard";
 import { MovieReviews } from "../apis/api";
-import { useWishlist } from "../context/wishList";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
-import { FaLink } from "react-icons/fa";
-import Loader from "../components/Loader";
 
 const MovieDetails = () => {
-    const [loading, setLoading] = useState(true);
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const { language } = useLanguage(); // Get the selected language from context
-    const { addToWishlist, removeFromWishlist, inWishlist } = useWishlist();
-    const isInWishlist = movie ? inWishlist(movie) : false;
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [reviews, setReviews] = useState([]);
+    const [reviewError, setReviewError] = useState(null);
+
+    useEffect(() => {
+        const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        setIsFavorite(wishlist.includes(id));
+    }, [id]);
 
     useEffect(() => {
         const fetchMovie = async () => {
+            setLoading(true); // Start loading
             try {
-                setLoading(true); // Start loading
-                const data = await fetchMovieDetails(id, language); // Use the correct API function
+                const BASE_URL = import.meta.env.VITE_BASE_URL?.endsWith("/")
+                    ? import.meta.env.VITE_BASE_URL
+                    : `${import.meta.env.VITE_BASE_URL}/`;
+                
+                const url = `${BASE_URL}movie/${id}`;
+                const { data } = await axios.get(url, { params: { api_key: import.meta.env.VITE_API_KEY } });
+
                 setMovie(data);
             } catch (err) {
-                console.error("Failed to fetch movie details:", err);
                 setError("Failed to fetch movie details. Please try again.");
             } finally {
                 setLoading(false); // Stop loading
@@ -35,142 +43,120 @@ const MovieDetails = () => {
         };
 
         fetchMovie();
-    }, [id, language]); // Re-fetch when `id` or `language` changes
-
-    //collecting reviews per movie
-    const [reviews, setReviews] = useState([]);
-    const [reviewError, setReviewError] = useState(null);
+    }, [id]);
 
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                // setReviewError(null)
                 const reviewDetails = await MovieReviews(id);
                 setReviews(reviewDetails);
-                //console.log(reviews)
             } catch (error) {
-                setReviewError(error.message);
-                console.error("failed to fetch reviews: ", error);
+                setReviewError("Failed to fetch reviews.");
+                console.error("Failed to fetch reviews:", error);
             }
         };
         fetchReviews();
     }, [id]);
-    //end reviews
-    useEffect(() => {
-        console.log(reviews);
-    }, [reviews]);
-    // toggle wishlist status
-    const handleWishlistToggle = (e) => {
-        e.preventDefault();
-        if (isInWishlist) {
-            removeFromWishlist(movie);
-        } else {
-            addToWishlist(movie);
-        }
+
+    const toggleFavorite = () => {
+        const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+        const updatedWishlist = isFavorite
+            ? wishlist.filter(movieId => movieId !== id)
+            : [...wishlist, id];
+
+        localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+        setIsFavorite(!isFavorite);
     };
-    // Show Loader while loading
-    if (loading) {
-        return <Loader />;
-    }
-    if (error) return <p className="error-message">{error}</p>;
-    if (!movie) return <p className="loading-message">Loading...</p>;
+
+    if (loading) return <Loader />;
+    if (error) return <p className="text-danger text-center">{error}</p>;
 
     return (
-        <>
-            <div className="movie-container">
-                <div className="movie-poster">
-                    {movie.poster_path ? (
-                        <img src={`${import.meta.env.VITE_IMAGE_URL}${movie.poster_path}`} alt={movie.title} />
-                    ) : (
-                        <p className="no-image">No image available</p>
-                    )}
-                </div>
-
-                <div>
-                    <div className="movie-header">
-                        <h2 className="movie-title">{movie.title}</h2>
-                        <a href="#" onClick={handleWishlistToggle} className="mb-0 mr-3">
-                            <FontAwesomeIcon icon={faHeart} className={`text-3xl ${isInWishlist ? "text-primary" : "fa-regular text-gray-300"}`} />
-                        </a>
+        <Container className="mt-4">
+            <Row className="align-items-start">
+                <Col md={4} className="text-start">
+                    <img 
+                        className="rounded-3 img-fluid" 
+                        src={movie.poster_path ? `${import.meta.env.VITE_IMAGE_URL}${movie.poster_path}` : emptyPosterImage} 
+                        alt={movie.title} 
+                        style={{ width: "100%", objectFit: "cover", borderRadius: "27px" }}
+                    />
+                </Col>
+                <Col md={8}>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <h1 className="h3 fw-bold" style={{ fontSize: "48px", color: "#000" }}>{movie.title}</h1>
+                        <FaHeart 
+                            onClick={toggleFavorite} 
+                            className="fs-4" 
+                            role="button" 
+                            style={{ 
+                                cursor: "pointer", 
+                                transition: "all 0.3s ease-in-out", 
+                                color: isFavorite ? "#FFE353" : "#6c757d" 
+                            }}
+                        />
                     </div>
-
-                    <p className="movie-date mt-3">{movie.release_date || "N/A"}</p>
-
-                    <div className="movie-rating mt-4">
-                        {[...Array(5)].map((_, index) => (
-                            <span key={index} className="star-wrapper">
-                                <svg
-                                    className={`vector-star ${index < Math.round(movie.vote_average / 2) ? "filled" : "empty"}`}
-                                    viewBox="0 0 24 24"
-                                    fill={index < Math.round(movie.vote_average / 2) ? "black" : "none"}
-                                    stroke="black"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                >
-                                    <polygon points="12 2 15.1 8.3 22 9.3 17 14.2 18.2 21 12 17.8 5.8 21 7 14.2 2 9.3 8.9 8.3 12 2"></polygon>
-                                </svg>
-                            </span>
-                        ))}
-                        <span className="rating-number">{movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}</span>
-                    </div>
-
-                    <p className="movie-description mt-5">{movie.overview || "No overview available."}</p>
-
-                    <div className="movie-genres mt-4">
+                    <p className="text-muted">{movie.release_date || "N/A"}</p>
+                    <p style={{ fontSize: "24px", color: "#000" }}>{movie.overview || "No overview available."}</p>
+                    <div className="mb-3 d-flex flex-wrap mt-5" style={{ gap: "10px" }}>
                         {movie.genres?.map((genre) => (
-                            <span key={genre.id} className="genre-badge">
-                                {genre.name}
-                            </span>
+                            <Badge key={genre.id} className="me-2" style={{ backgroundColor: "#FFE353", borderRadius: "25px", padding: "10px 15px", color: "#000" }}>{genre.name}</Badge>
                         ))}
                     </div>
-
-                    <div className="movie-info mt-4">
-                        <p>
-                            <strong>Duration:</strong>{" "}
-                            <span className="movie-value movie-duration-value">{movie.runtime ? `${movie.runtime} min` : "N/A"}</span>
-                        </p>
-                        <p>
-                            <strong>Language:</strong>{" "}
-                            <span className="movie-value movie-language-value">
-                                {movie.original_language ? movie.original_language.toUpperCase() : "N/A"}
-                            </span>
-                        </p>
-                    </div>
-
-                    {movie.production_companies?.length > 0 && (
-                        <div className="movie-company mt-4">
-                            {movie.production_companies[0].logo_path ? (
-                                <img
-                                    src={`${import.meta.env.VITE_IMAGE_URL}${movie.production_companies[0].logo_path}`}
-                                    alt={movie.production_companies[0].name}
-                                />
-                            ) : (
-                                <p>{movie.production_companies[0].name}</p>
-                            )}
+                    <Row className="mt-4">
+                        <Col><p><strong>Duration:</strong> {movie.runtime ? `${movie.runtime} min` : "N/A"}</p></Col>
+                        <Col><p><strong>Language:</strong> {movie.original_language?.toUpperCase() || "N/A"}</p></Col>
+                    </Row>
+                    {movie.production_companies?.length > 0 && movie.production_companies[0].logo_path && (
+                        <div className="mt-4">
+                            <img
+                                className="img-fluid"
+                                src={`${import.meta.env.VITE_IMAGE_URL}${movie.production_companies[0].logo_path}`}
+                                alt={movie.production_companies[0].name}
+                                style={{ width: "150px" }}
+                            />
                         </div>
                     )}
-
-                    {movie.homepage && (
-                        <a href={movie.homepage} target="_blank" className="movie-website mt-4">
-                            Website <FaLink className="link-icon" />
-                        </a>
+                    {movie.homepage && movie.homepage.trim() && (
+                        <Button 
+                            className="border fw-bold mt-4 d-flex align-items-center justify-content-center" 
+                            style={{ 
+                                backgroundColor: "transparent", 
+                                borderColor: "#FFE353", 
+                                borderRadius: "25px",
+                                padding: "10px 15px",
+                                color: "#000",
+                                width: "122px",
+                                height: "37px",
+                                gap: "8px" 
+                            }}
+                        >
+                            Website
+                            <FaLink style={{ color: "#292D32", fontSize: "18px" }} />
+                        </Button>
                     )}
-                </div>
-            </div>
-
-            <div className="movie-divider"></div>
-            <div>
-                <Recommendations movieId={id} />
-            </div>
-            <div className="movie-divider"></div>
+                </Col>
+            </Row>
+            <hr className="mt-5" />
+            <Row>
+                <Col>
+                    <Recommendations movieId={id} />
+                </Col>
+            </Row>
             <hr />
             <div className="movie-reviews">
                 <h1 className="movie-reviews-header">Reviews</h1>
-                <ReviewCard reviews={reviews} />
+                {reviewError ? (
+                    <p className="text-danger">{reviewError}</p>
+                ) : (
+                    <ReviewCard reviews={reviews} />
+                )}
             </div>
-        </>
+        </Container>
     );
 };
 
 export default MovieDetails;
+
+
+
