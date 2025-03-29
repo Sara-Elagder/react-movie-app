@@ -26,13 +26,18 @@ const MovieCard = ({ movieObj }) => {
 
     // Navigate to movie details
     const goToMovieDetails = () => {
-        navigate(`/movie/${id}`); // Redirect to the movie details page
+        if (title) {
+            navigate(`/movie/${id}`); // to the movie details page}
+        }
+        else {
+            navigate(`/tv/${id}`); // to the tv-show details page}
+        }
     };
 
     return (
         <div
             id={`movie-card-${id}`}
-            className="max-w-sm bg-white rounded-xl overflow-hidden"
+            className="sm:w-full bg-white rounded-xl overflow-hidden"
             style={{ minHeight: "310px", cursor: "pointer" }}
             onClick={goToMovieDetails} // Add click handler for navigation
         >

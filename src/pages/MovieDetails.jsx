@@ -6,12 +6,17 @@ import Recommendations from "../components/recommendations";
 import Loader from "../components/Loader";
 import { Container, Row, Col, Badge, Button } from "react-bootstrap";
 import emptyPosterImage from "../assets/empty_poster.png";
+import ReviewCard from "../components/ReviewCard";
+import { MovieReviews } from "../apis/api";
 
 const MovieDetails = () => {
     const { id } = useParams();
     const [movie, setMovie] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isFavorite, setIsFavorite] = useState(false);
+    const [reviews, setReviews] = useState([]);
+    const [reviewError, setReviewError] = useState(null);
 
     useEffect(() => {
         const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -20,6 +25,7 @@ const MovieDetails = () => {
 
     useEffect(() => {
         const fetchMovie = async () => {
+            setLoading(true); // Start loading
             try {
                 const BASE_URL = import.meta.env.VITE_BASE_URL?.endsWith("/")
                     ? import.meta.env.VITE_BASE_URL
@@ -27,13 +33,29 @@ const MovieDetails = () => {
                 
                 const url = `${BASE_URL}movie/${id}`;
                 const { data } = await axios.get(url, { params: { api_key: import.meta.env.VITE_API_KEY } });
+
                 setMovie(data);
             } catch (err) {
                 setError("Failed to fetch movie details. Please try again.");
+            } finally {
+                setLoading(false); // Stop loading
             }
         };
 
         fetchMovie();
+    }, [id]);
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const reviewDetails = await MovieReviews(id);
+                setReviews(reviewDetails);
+            } catch (error) {
+                setReviewError("Failed to fetch reviews.");
+                console.error("Failed to fetch reviews:", error);
+            }
+        };
+        fetchReviews();
     }, [id]);
 
     const toggleFavorite = () => {
@@ -46,8 +68,8 @@ const MovieDetails = () => {
         setIsFavorite(!isFavorite);
     };
 
+    if (loading) return <Loader />;
     if (error) return <p className="text-danger text-center">{error}</p>;
-    if (!movie) return <Loader />;
 
     return (
         <Container className="mt-4">
@@ -111,10 +133,8 @@ const MovieDetails = () => {
                         >
                             Website
                             <FaLink style={{ color: "#292D32", fontSize: "18px" }} />
-                            
                         </Button>
                     )}
-
                 </Col>
             </Row>
             <hr className="mt-5" />
@@ -123,8 +143,20 @@ const MovieDetails = () => {
                     <Recommendations movieId={id} />
                 </Col>
             </Row>
+            <hr />
+            <div className="movie-reviews">
+                <h1 className="movie-reviews-header">Reviews</h1>
+                {reviewError ? (
+                    <p className="text-danger">{reviewError}</p>
+                ) : (
+                    <ReviewCard reviews={reviews} />
+                )}
+            </div>
         </Container>
     );
 };
 
 export default MovieDetails;
+
+
+
