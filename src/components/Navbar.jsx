@@ -29,7 +29,7 @@ const Navbar = () => {
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                            <Dropdown.Item as={Link} to="/nowplaying">
+                            <Dropdown.Item as={Link} to="/">
                                 Now Playing
                             </Dropdown.Item>
                             <Dropdown.Item as={Link} to="/popular">
