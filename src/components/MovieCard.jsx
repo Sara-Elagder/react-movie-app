@@ -3,6 +3,7 @@ import RateCircle from './rate_circle';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useWishlist } from '../context/wishList';
+import emptyPosterImage from '../assets/empty_poster.png'; // Import the image
 
 const MovieCard = ({ movieObj }) => {
   const { addToWishlist, removeFromWishlist, inWishlist } = useWishlist();
@@ -20,13 +21,18 @@ const MovieCard = ({ movieObj }) => {
     }
   };
 
+
   return (
     <div id={`movie-card-${id}`}
       className="max-w-sm bg-white rounded-xl overflow-hidden" style={{ minHeight: '310px' }}>
 
       <div className='relative'>
         <a href="#">
-          <img className="rounded-xl w-full" src={`https://image.tmdb.org/t/p/w500/${poster_path}`} alt={title} />
+          {poster_path ? (
+            <img className="rounded-xl w-full" src={`https://image.tmdb.org/t/p/w500/${poster_path}`} alt={title} />
+          ) : (
+            <img className="rounded-xl w-full" src={emptyPosterImage} alt="No Poster Available" />
+          )}
         </a>
         <div className="absolute bottom-0 left-5 transform translate-y-1/2">
           <RateCircle rate={Math.round(vote_average * 10)} className='w-14 h-14' />
