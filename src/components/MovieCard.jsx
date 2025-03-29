@@ -2,10 +2,23 @@ import React from 'react';
 import RateCircle from './rate_circle';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
-
+import { useWishlist } from '../context/wishList';
 
 const MovieCard = ({ movieObj }) => {
+  const { addToWishlist, removeFromWishlist, inWishlist } = useWishlist();
   const { id, title, poster_path, vote_average, release_date } = movieObj;
+
+  const isInWishlist = inWishlist(movieObj);
+
+  // toggle wishlist status
+  const handleWishlistToggle = (e) => {
+    e.preventDefault();
+    if (isInWishlist) {
+      removeFromWishlist(movieObj);
+    } else {
+      addToWishlist(movieObj);
+    }
+  };
 
   return (
     <div id={`movie-card-${id}`}
@@ -26,11 +39,12 @@ const MovieCard = ({ movieObj }) => {
 
         <div className='flex justify-between items-center my-4 bottom-0'>
           <p className='px-4 mb-0 text-gray-500 text-3xl' >{release_date}</p>
-          <a href="#">
-            <FontAwesomeIcon icon={faHeart} className="text-5xl fa-regular text-gray-300" /> {/*text-primary if in wichlist */}
+          <a href="#" onClick={handleWishlistToggle}>
+            <FontAwesomeIcon
+              icon={faHeart}
+              className={`text-5xl ${isInWishlist ? 'text-primary' : 'fa-regular text-gray-300'}`}
+            />
           </a>
-
-
         </div>
       </div>
     </div>
