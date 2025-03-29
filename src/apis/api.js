@@ -76,7 +76,7 @@ export const getRecommendations = async (movie_id) => {
     const response = await axios.get(`${config.BASE_URL}movie/${movie_id}/recommendations?api_key=${config.API_KEY}`)
     return response.data.results
   } catch (error) {
-    console.error('Error fetching movie list:', error)
+    console.error('Error fetching recommendations:', error)
     throw error 
   }
 }
