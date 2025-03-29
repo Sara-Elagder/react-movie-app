@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "@fortawesome/fontawesome-free/css/all.css";
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState("");
+  const navigate = useNavigate();
 
   const handleSearch = () => {
     if (query.trim() !== "") {
-      onSearch(query);
+      navigate(`/search?query=${encodeURIComponent(query)}`);
     }
   };
 
@@ -37,6 +39,7 @@ const SearchBar = ({ onSearch }) => {
                 }}
               />
               <button
+              type="submit"
                 className="btn  d-flex align-items-center justify-content-center "
                 onClick={handleSearch}
                 style={{
