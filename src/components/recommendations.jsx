@@ -1,15 +1,17 @@
 import { getRecommendations } from "../apis/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import MovieCard from "./MovieCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
+import "swiper/css/autoplay";
+import { Navigation, Autoplay } from "swiper/modules";
 
 function Recommendations({ movieId }) {
     const [recommendations, setRecommendations] = useState([]);
     const { language } = useLanguage();
+    const swiperRef = useRef(null);
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -23,12 +25,20 @@ function Recommendations({ movieId }) {
         fetchMovies();
     }, [movieId, language]);
 
+    // Force autoplay to start
+    useEffect(() => {
+        if (swiperRef.current && swiperRef.current.swiper) {
+            swiperRef.current.swiper.autoplay.start();
+        }
+    }, [recommendations]);
+
     return (
         <div className="w-full max-w-full px-2 md:px-4 my-6">
             <h1 className="text-xl md:text-2xl font-bold mb-4">Recommendations</h1>
             {recommendations.length > 0 ? (
                 <Swiper
-                    modules={[Navigation]}
+                    ref={swiperRef}
+                    modules={[Navigation, Autoplay]}
                     spaceBetween={10}
                     slidesPerView={2}
                     breakpoints={{
@@ -38,6 +48,13 @@ function Recommendations({ movieId }) {
                         1280: { slidesPerView: 6 }  // xl
                     }}
                     navigation
+                    autoplay={{
+                        delay: 1500,
+                        disableOnInteraction: false,
+                        pauseOnMouseEnter: true,
+                    }}
+                    speed={1000}
+                    loop={true}
                     onTouchStart={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
                     className="w-full"
