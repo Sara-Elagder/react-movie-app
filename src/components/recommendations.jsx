@@ -1,6 +1,6 @@
 import { getRecommendations } from "../apis/api";
 import { useEffect, useState } from "react";
-import { useLanguage } from "../context/LanguageContext"; // Import LanguageContext
+import { useLanguage } from "../context/LanguageContext";
 import MovieCard from "./MovieCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -9,43 +9,51 @@ import { Navigation } from "swiper/modules";
 
 function Recommendations({ movieId }) {
     const [recommendations, setRecommendations] = useState([]);
-    const { language } = useLanguage(); // Get the selected language from context
+    const { language } = useLanguage();
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const movies = await getRecommendations(+movieId, language); // Pass language to API
+                const movies = await getRecommendations(+movieId, language);
                 setRecommendations(movies);
             } catch (error) {
                 console.error("Error fetching recommendations:", error);
             }
         };
         fetchMovies();
-    }, [movieId, language]); // Re-fetch when movieId or language changes
+    }, [movieId, language]);
 
     return (
-        <div>
-            <h1>Recommendations</h1>
+        <div className="w-full max-w-full px-2 md:px-4 my-6">
+            <h1 className="text-xl md:text-2xl font-bold mb-4">Recommendations</h1>
             {recommendations.length > 0 ? (
                 <Swiper
                     modules={[Navigation]}
                     spaceBetween={10}
-                    slidesPerView={6}
+                    slidesPerView={2}
+                    breakpoints={{
+                        640: { slidesPerView: 3 },  // sm
+                        768: { slidesPerView: 4 },  // md
+                        1024: { slidesPerView: 5 }, // lg
+                        1280: { slidesPerView: 6 }  // xl
+                    }}
                     navigation
-                    onTouchStart={(e) => e.stopPropagation()} // Prevent Swiper from interfering with dropdown
-                    onClick={(e) => e.stopPropagation()} // Prevent Swiper click events from propagating
+                    onTouchStart={(e) => e.stopPropagation()}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full"
                 >
                     {recommendations.map((movie) => (
-                        <SwiperSlide key={movie.id}>
-                            <MovieCard movieObj={movie} />
+                        <SwiperSlide key={movie.id} className="h-auto">
+                            <div className="px-1">
+                                <MovieCard movieObj={movie} />
+                            </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
             ) : (
-                <p>
+                <p className="text-gray-600 italic">
                     We don't have enough data to suggest any movies based on this movie.
                     You can help by rating movies you've seen.
-
                 </p>
             )}
             <style>
