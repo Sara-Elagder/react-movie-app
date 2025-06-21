@@ -69,9 +69,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Contributions are welcome! Please fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
-
-## Contact
-
-For any questions or inquiries, feel free to contact me at:
-- Email: [developer.mustafa@outlook.com](developer.mustafa@outlook.com)
-- LinkedIn: [Mustafa Said Hassan](https://www.linkedin.com/in/mustafaahassan/)
